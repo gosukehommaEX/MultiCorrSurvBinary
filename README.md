@@ -1,4 +1,4 @@
-# MultiCorrSurvBinary
+# MultiCorrSurvBinary <img src="man/figures/MultiCorrSurvBinary_sticker.png" align="right" height="139" />
 
 [![R-CMD-check](https://github.com/gosukehommaEX/MultiCorrSurvBinary/workflows/R-CMD-check/badge.svg)](https://github.com/gosukehommaEX/MultiCorrSurvBinary/actions)
 [![CRAN status](https://www.r-pkg.org/badges/version/MultiCorrSurvBinary)](https://CRAN.R-project.org/package=MultiCorrSurvBinary)
