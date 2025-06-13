@@ -89,10 +89,9 @@ The prioritize parameter determines which distribution is preserved:
 }
 }
 \examples{
-\dontrun{
 # Generate correlated OS, PFS, and OR
 result <- rCorrSurvBinary(
-  nsim = 1000,
+  nsim = 100,
   outcomes = c('OS', 'PFS', 'OR'),
   n = 200,
   mst.OS = 12,
@@ -108,7 +107,7 @@ result <- rCorrSurvBinary(
 
 # Generate only OS and PFS with correlation, preserving PFS distribution
 result2 <- rCorrSurvBinary(
-  nsim = 500,
+  nsim = 100,
   outcomes = c('OS', 'PFS'),
   n = 100,
   mst.OS = 15,
@@ -118,6 +117,5 @@ result2 <- rCorrSurvBinary(
   seed = 456,
   prioritize = "PFS"
 )
-}
 
 }

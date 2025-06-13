@@ -64,7 +64,6 @@ All bounds are computed using R's integrate() function for high precision
 analytical integration. No grid approximation is used.
 }
 \examples{
-\dontrun{
 # Calculate true bounds for OS, PFS, and OR
 validation <- CorrBounds(
   outcomes = c('OS', 'PFS', 'OR'),
@@ -86,7 +85,6 @@ if (!validation$valid) {
     bound <- validation$bounds[[bound.name]]
     cat(sprintf("\%s: [\%.6f, \%.6f]\n", bound.name, bound$lower, bound$upper))
   }
-}
 }
 
 }
