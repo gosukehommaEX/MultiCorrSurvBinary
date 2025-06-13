@@ -10,7 +10,7 @@ Authors@R: person("Gosuke", "Homma",
 Description: Provides functions for generating correlated time-to-event and binary 
     outcomes in clinical trial simulations. Supports multiple treatment arms, 
     subgroups, and event-driven analyses with proper correlation structure modeling 
-    using copulas. Includes validation of Fréchet-Hoeffding bounds and comprehensive 
+    using copulas. Includes validation of Frechet-Hoeffding bounds and comprehensive 
     statistical testing capabilities for overall survival, progression-free survival,
     and objective response endpoints.
 License: MIT + file LICENSE
@@ -23,14 +23,14 @@ Imports:
     copula (>= 1.0.0),
     dplyr (>= 1.0.0),
     survival (>= 3.0.0),
-    stats,
-    tibble (>= 3.0.0)
+    stats
 Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
     ggplot2,
-    devtools
+    devtools,
+    tibble (>= 3.0.0)
 VignetteBuilder: knitr
 URL: https://github.com/gosukehommaEX/MultiCorrSurvBinary
 BugReports: https://github.com/gosukehommaEX/MultiCorrSurvBinary/issues

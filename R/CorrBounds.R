@@ -88,7 +88,7 @@ CorrBounds <- function(outcomes,
   # Helper function to calculate true bounds for continuous-continuous variables
   calculate.true.continuous.continuous.bounds <- function(lambda1, lambda2) {
 
-    # For exponential distributions, we can calculate Fréchet-Hoeffding bounds
+    # For exponential distributions, we can calculate Frechet-Hoeffding bounds
     # using the analytical properties
 
     # Mean and standard deviation for both distributions
@@ -102,7 +102,7 @@ CorrBounds <- function(outcomes,
     # use the same uniform random variable u: X1 = F1^(-1)(u), X2 = F2^(-1)(u)
 
     # E[X1 * X2] under perfect positive dependence
-    # = E[qexp(U, λ1) * qexp(U, λ2)] where U ~ Uniform(0,1)
+    # = E[qexp(U, \u03bb1) * qexp(U, \u03bb2)] where U ~ Uniform(0,1)
 
     integrand.upper <- function(u) {
       x1 <- qexp(u, rate = lambda1)
@@ -205,7 +205,7 @@ CorrBounds <- function(outcomes,
 
       if (rho.OS.PFS < bounds.OS.PFS$lower || rho.OS.PFS > bounds.OS.PFS$upper) {
         validation.results$errors <- c(validation.results$errors,
-                                       sprintf("rho.OS.PFS (%.6f) is outside true Fréchet-Hoeffding bounds [%.6f, %.6f]",
+                                       sprintf("rho.OS.PFS (%.6f) is outside true Frechet-Hoeffding bounds [%.6f, %.6f]",
                                                rho.OS.PFS, bounds.OS.PFS$lower, bounds.OS.PFS$upper))
         validation.results$valid <- FALSE
       }
@@ -224,7 +224,7 @@ CorrBounds <- function(outcomes,
 
       if (rho.OS.OR < bounds.OS.OR$lower || rho.OS.OR > bounds.OS.OR$upper) {
         validation.results$errors <- c(validation.results$errors,
-                                       sprintf("rho.OS.OR (%.6f) is outside true Fréchet-Hoeffding bounds [%.6f, %.6f]",
+                                       sprintf("rho.OS.OR (%.6f) is outside true Frechet-Hoeffding bounds [%.6f, %.6f]",
                                                rho.OS.OR, bounds.OS.OR$lower, bounds.OS.OR$upper))
         validation.results$valid <- FALSE
       }
@@ -243,7 +243,7 @@ CorrBounds <- function(outcomes,
 
       if (rho.PFS.OR < bounds.PFS.OR$lower || rho.PFS.OR > bounds.PFS.OR$upper) {
         validation.results$errors <- c(validation.results$errors,
-                                       sprintf("rho.PFS.OR (%.6f) is outside true Fréchet-Hoeffding bounds [%.6f, %.6f]",
+                                       sprintf("rho.PFS.OR (%.6f) is outside true Frechet-Hoeffding bounds [%.6f, %.6f]",
                                                rho.PFS.OR, bounds.PFS.OR$lower, bounds.PFS.OR$upper))
         validation.results$valid <- FALSE
       }
