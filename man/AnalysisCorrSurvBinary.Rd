@@ -29,7 +29,7 @@ first subgroup in this vector.}
 \item{alternative}{Direction of alternative hypothesis. Options are:
 "greater" (default): treatment > control (improvement in treatment)
 "less": treatment < control
-"two.sided": treatment ≠ control}
+"two.sided": treatment != control}
 }
 \value{
 A tibble containing analysis results with columns:
@@ -63,7 +63,7 @@ The algorithm performs the following:
    - OR: One-sided chi-squared test with pooled proportion
 
 Total number of tests per simulation =
-length(subgroup.prioritize) × available_outcomes × (n_arms - 1)
+length(subgroup.prioritize) x available_outcomes x (n_arms - 1)
 }
 \examples{
 \dontrun{

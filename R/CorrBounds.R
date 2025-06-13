@@ -1,6 +1,6 @@
-#' Calculate and Validate True Fréchet-Hoeffding Correlation Bounds
+#' Calculate and Validate True Frechet-Hoeffding Correlation Bounds
 #'
-#' This function calculates the true Fréchet-Hoeffding bounds using analytical
+#' This function calculates the true Frechet-Hoeffding bounds using analytical
 #' integration for different types of variable combinations and validates
 #' whether specified correlation coefficients are within these bounds.
 #'
@@ -17,16 +17,16 @@
 #' @return A list containing:
 #'   \item{valid}{Logical indicating if all correlations are valid}
 #'   \item{errors}{Character vector of error messages (empty if valid)}
-#'   \item{bounds}{List of true Fréchet-Hoeffding bounds for each correlation pair}
+#'   \item{bounds}{List of true Frechet-Hoeffding bounds for each correlation pair}
 #'   \item{eigenvalues}{Eigenvalues of correlation matrix (if applicable)}
 #'   \item{computation.time}{Time taken for bounds calculation}
 #'
 #' @details
-#' The function calculates true Fréchet-Hoeffding bounds using analytical integration:
+#' The function calculates true Frechet-Hoeffding bounds using analytical integration:
 #'
 #' \strong{Continuous-Continuous (OS-PFS):}
 #' For exponential distributions, the bounds are calculated by finding the
-#' correlation of the Fréchet-Hoeffding copulas W (lower bound) and M (upper bound)
+#' correlation of the Frechet-Hoeffding copulas W (lower bound) and M (upper bound)
 #' applied to exponential marginals using R's integrate() function.
 #'
 #' \strong{Continuous-Binary (OS-OR, PFS-OR):}
@@ -57,7 +57,7 @@
 #'   for (error in validation$errors) {
 #'     cat("-", error, "\n")
 #'   }
-#'   cat("\nTrue Fréchet-Hoeffding bounds:\n")
+#'   cat("\nTrue Frechet-Hoeffding bounds:\n")
 #'   for (bound.name in names(validation$bounds)) {
 #'     bound <- validation$bounds[[bound.name]]
 #'     cat(sprintf("%s: [%.6f, %.6f]\n", bound.name, bound$lower, bound$upper))

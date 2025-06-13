@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 The `MultiCorrSurvBinary` package provides comprehensive tools for generating correlated time-to-event and binary outcomes in clinical trial simulations. This package is particularly useful for:
 
 - Simulating correlated clinical trial endpoints
-- Validating correlation structures using Fréchet-Hoeffding bounds
+- Validating correlation structures using Frechet-Hoeffding bounds
 - Performing event-driven analyses with proper statistical testing
 - Handling multiple treatment arms and subgroups
 
@@ -45,12 +45,12 @@ The package supports three types of clinical trial outcomes:
 Correlations between outcomes are modeled using:
 
 - **Normal copula** for generating correlated random variables
-- **Fréchet-Hoeffding bounds** for validating feasible correlation ranges
+- **Frechet-Hoeffding bounds** for validating feasible correlation ranges
 - **Analytical integration** for precise bound calculations
 
-### OS ≥ PFS Constraint
+### OS >= PFS Constraint
 
-When both OS and PFS are included, the biological constraint OS ≥ PFS is enforced with options to prioritize preserving either the OS or PFS marginal distribution.
+When both OS and PFS are included, the biological constraint OS >= PFS is enforced with options to prioritize preserving either the OS or PFS marginal distribution.
 
 ## Basic Usage
 

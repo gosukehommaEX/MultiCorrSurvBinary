@@ -114,25 +114,25 @@ print(arm_comparison)
 
 Simulate a trial with biomarker-defined subgroups.
 
-```{r biomarker-trial}
-# Biomarker-stratified trial parameters
+```{r biomarker-trial, eval=FALSE}
+# Biomarker-stratified trial parameters - use sub1, sub2 naming
 biomarker_params <- list(
   treatment = list(
-    biomarker_positive = list(
+    sub1 = list(  # biomarker_positive -> sub1
       mst.OS = 30, mst.PFS = 18, p.OR = 0.7, n = 60,
       rho.OS.PFS = 0.6, rho.OS.OR = 0.4, rho.PFS.OR = 0.5
     ),
-    biomarker_negative = list(
+    sub2 = list(  # biomarker_negative -> sub2
       mst.OS = 20, mst.PFS = 10, p.OR = 0.4, n = 40,
       rho.OS.PFS = 0.6, rho.OS.OR = 0.4, rho.PFS.OR = 0.5
     )
   ),
   control = list(
-    biomarker_positive = list(
+    sub1 = list(  # biomarker_positive -> sub1
       mst.OS = 22, mst.PFS = 12, p.OR = 0.4, n = 60,
       rho.OS.PFS = 0.6, rho.OS.OR = 0.4, rho.PFS.OR = 0.5
     ),
-    biomarker_negative = list(
+    sub2 = list(  # biomarker_negative -> sub2
       mst.OS = 18, mst.PFS = 8, p.OR = 0.25, n = 40,
       rho.OS.PFS = 0.6, rho.OS.OR = 0.4, rho.PFS.OR = 0.5
     )
@@ -149,7 +149,7 @@ biomarker_data <- rCorrSurvBinaryMultiArmSubgroup(
   validate.bounds = FALSE
 )
 
-# Analyze by biomarker status
+# Analyze by biomarker status (use SUBGROUP column)
 biomarker_analysis <- biomarker_data %>%
   group_by(ARM, SUBGROUP) %>%
   summarise(
@@ -317,6 +317,6 @@ print(constraint_check)
 ### 4. Validation
 - Check marginal distributions match specifications
 - Verify correlation structures are preserved
-- Ensure biological constraints (OS ≥ PFS) are maintained
+- Ensure biological constraints (OS >= PFS) are maintained
 
 This comprehensive set of examples demonstrates the flexibility and power of the `MultiCorrSurvBinary` package for clinical trial simulations.

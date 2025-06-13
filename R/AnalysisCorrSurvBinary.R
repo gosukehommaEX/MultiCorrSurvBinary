@@ -15,7 +15,7 @@
 #' @param alternative Direction of alternative hypothesis. Options are:
 #'   "greater" (default): treatment > control (improvement in treatment)
 #'   "less": treatment < control
-#'   "two.sided": treatment ≠ control
+#'   "two.sided": treatment != control
 #'
 #' @return A tibble containing analysis results with columns:
 #'   \item{sim}{Simulation iteration number}
@@ -44,7 +44,7 @@
 #'    - OR: One-sided chi-squared test with pooled proportion
 #'
 #' Total number of tests per simulation =
-#' length(subgroup.prioritize) × available_outcomes × (n_arms - 1)
+#' length(subgroup.prioritize) x available_outcomes x (n_arms - 1)
 #'
 #' @examples
 #' \dontrun{

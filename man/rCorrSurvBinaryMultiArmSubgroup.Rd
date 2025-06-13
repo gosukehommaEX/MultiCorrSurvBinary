@@ -31,7 +31,7 @@ Each subgroup list should contain: mst.OS, mst.PFS, p.OR, rho.OS.PFS, rho.OS.OR,
 \item{seed}{A numeric value representing seed number for reproducing results}
 
 \item{validate.bounds}{Logical, whether to validate correlation bounds against
-Fréchet-Hoeffding bounds before simulation (default: TRUE)}
+Frechet-Hoeffding bounds before simulation (default: TRUE)}
 
 \item{prioritize}{Character string specifying which distribution to preserve
 when applying OS >= PFS constraint. Options are "OS" (default) or "PFS".}

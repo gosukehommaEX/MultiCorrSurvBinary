@@ -15,7 +15,7 @@
 #'   (patients will be enrolled within [0, tau], default: 12)
 #' @param seed A numeric value representing seed number for reproducing results
 #' @param validate.bounds Logical, whether to validate correlation bounds against
-#'   Fréchet-Hoeffding bounds before simulation (default: TRUE)
+#'   Frechet-Hoeffding bounds before simulation (default: TRUE)
 #' @param prioritize Character string specifying which distribution to preserve
 #'   when applying OS >= PFS constraint. Options are "OS" (default) or "PFS".
 #'
@@ -226,7 +226,7 @@ rCorrSurvBinaryMultiArmSubgroup <- function(nsim,
           cat("ERROR:", error, "\n")
         }
 
-        cat("\n=== TRUE FRÉCHET-HOEFFDING BOUNDS ===\n")
+        cat("\n=== TRUE FRECHET-HOEFFDING BOUNDS ===\n")
         for (bound.name in names(validation$bounds)) {
           bound.info <- validation$bounds[[bound.name]]
           cat(sprintf("%s: [%.6f, %.6f]\n",

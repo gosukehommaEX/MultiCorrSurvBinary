@@ -13,16 +13,16 @@
 #' @param mst.PFS A numeric value representing median survival time of PFS in years
 #' @param p.OR A numeric value representing probability of OR (0 <= p.OR <= 1)
 #' @param rho.OS.PFS A numeric value representing correlation between OS and PFS
-#'   (must be within Fréchet-Hoeffding bounds, default: 0)
+#'   (must be within Frechet-Hoeffding bounds, default: 0)
 #' @param rho.OS.OR A numeric value representing correlation between OS and OR
-#'   (must be within Fréchet-Hoeffding bounds, default: 0)
+#'   (must be within Frechet-Hoeffding bounds, default: 0)
 #' @param rho.PFS.OR A numeric value representing correlation between PFS and OR
-#'   (must be within Fréchet-Hoeffding bounds, default: 0)
+#'   (must be within Frechet-Hoeffding bounds, default: 0)
 #' @param tau A numeric value representing patients' accrual period in years
 #'   (patients will be enrolled within [0, tau], default: 12)
 #' @param seed A numeric value representing seed number for reproducing results
 #' @param validate.bounds Logical, whether to validate correlation bounds against
-#'   Fréchet-Hoeffding bounds before simulation (default: TRUE)
+#'   Frechet-Hoeffding bounds before simulation (default: TRUE)
 #' @param prioritize Character string specifying which distribution to preserve
 #'   when applying OS >= PFS constraint. Options are "OS" (default) or "PFS".
 #'   Only applies when both OS and PFS are included in outcomes.
@@ -156,7 +156,7 @@ rCorrSurvBinary <- function(nsim,
         cat("ERROR:", error, "\n")
       }
 
-      cat("\n=== TRUE FRÉCHET-HOEFFDING BOUNDS ===\n")
+      cat("\n=== TRUE FRECHET-HOEFFDING BOUNDS ===\n")
       for (bound.name in names(validation$bounds)) {
         bound.info <- validation$bounds[[bound.name]]
         cat(sprintf("%s: [%.6f, %.6f] (%s)\n",
@@ -165,7 +165,7 @@ rCorrSurvBinary <- function(nsim,
 
       cat(sprintf("\nBounds computation time: %.3f seconds\n", validation$computation.time))
 
-      stop("Correlation validation failed. Please adjust correlation parameters to be within true Fréchet-Hoeffding bounds.")
+      stop("Correlation validation failed. Please adjust correlation parameters to be within true Frechet-Hoeffding bounds.")
     }
   }
 

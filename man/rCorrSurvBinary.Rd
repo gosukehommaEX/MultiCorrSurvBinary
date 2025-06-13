@@ -34,13 +34,13 @@ rCorrSurvBinary(
 \item{p.OR}{A numeric value representing probability of OR (0 <= p.OR <= 1)}
 
 \item{rho.OS.PFS}{A numeric value representing correlation between OS and PFS
-(must be within Fréchet-Hoeffding bounds, default: 0)}
+(must be within Frechet-Hoeffding bounds, default: 0)}
 
 \item{rho.OS.OR}{A numeric value representing correlation between OS and OR
-(must be within Fréchet-Hoeffding bounds, default: 0)}
+(must be within Frechet-Hoeffding bounds, default: 0)}
 
 \item{rho.PFS.OR}{A numeric value representing correlation between PFS and OR
-(must be within Fréchet-Hoeffding bounds, default: 0)}
+(must be within Frechet-Hoeffding bounds, default: 0)}
 
 \item{tau}{A numeric value representing patients' accrual period in years
 (patients will be enrolled within [0, tau], default: 12)}
@@ -48,7 +48,7 @@ rCorrSurvBinary(
 \item{seed}{A numeric value representing seed number for reproducing results}
 
 \item{validate.bounds}{Logical, whether to validate correlation bounds against
-Fréchet-Hoeffding bounds before simulation (default: TRUE)}
+Frechet-Hoeffding bounds before simulation (default: TRUE)}
 
 \item{prioritize}{Character string specifying which distribution to preserve
 when applying OS >= PFS constraint. Options are "OS" (default) or "PFS".

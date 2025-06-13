@@ -9,7 +9,7 @@ MultiCorrSurvBinary is an R package for generating correlated time-to-event and 
 
 - Generating correlated overall survival (OS), progression-free survival (PFS), and objective response (OR) outcomes
 - Supporting multiple treatment arms and subgroups
-- Validating correlation bounds using Fréchet-Hoeffding constraints
+- Validating correlation bounds using Frechet-Hoeffding constraints
 - Performing event-driven analyses with proper statistical testing
 - Handling complex correlation structures using copulas
 
@@ -28,13 +28,13 @@ devtools::install_github("gosukehommaEX/MultiCorrSurvBinary")
 ## Key Features
 
 ### 1. Correlation Bound Validation
-The package includes rigorous validation of correlation parameters against true Fréchet-Hoeffding bounds using analytical integration.
+The package includes rigorous validation of correlation parameters against true Frechet-Hoeffding bounds using analytical integration.
 
 ### 2. Flexible Simulation Framework
 - Single or multiple treatment arms
 - Subgroup analyses
 - Customizable outcome combinations (OS, PFS, OR)
-- Proper handling of OS ≥ PFS constraints
+- Proper handling of OS >= PFS constraints
 
 ### 3. Event-Driven Analysis
 - Sequential analysis at predefined event numbers
@@ -84,7 +84,7 @@ summary(analysis_results)
 
 - `rCorrSurvBinary()`: Generate correlated outcomes for single population
 - `rCorrSurvBinaryMultiArmSubgroup()`: Generate correlated outcomes for multiple arms/subgroups
-- `CorrBounds()`: Validate correlation bounds using Fréchet-Hoeffding constraints
+- `CorrBounds()`: Validate correlation bounds using Frechet-Hoeffding constraints
 - `TestsSurvBinary()`: Perform statistical tests
 - `AnalysisCorrSurvBinary()`: Event-driven analysis framework
 
