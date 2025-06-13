@@ -3,6 +3,7 @@
 export(AnalysisCorrSurvBinary)
 export(CorrBounds)
 export(TestsSurvBinary)
+export(rCorrSurvBinary)
 export(rCorrSurvBinaryMultiArmSubgroup)
 import(copula)
 import(dplyr)
