@@ -23,48 +23,7 @@ test_that("rCorrSurvBinaryMultiArmSubgroup handles multiple arms", {
   expect_equal(nrow(result), 5 * 100)  # nsim * total n
   expect_named(result, c("sim", "ARM", "SUBGROUP", "patientID", "OS", "PFS", "OR", "Accrual"))
   expect_equal(sort(unique(result$ARM)), c("arm1", "arm2"))
-  expect_true(all(id_check$n_unique == id_check$n_total))
-  expect_true(all(id_check$max_id == 25))  # Should be 1 to n for each arm
-})
-
-test_that("rCorrSurvBinaryMultiArmSubgroup handles mixed arm structures", {
-  # Mix of single population and subgroups
-  mixed_params <- list(
-    arm1 = list(
-      # Single population
-      mst.OS = 18, mst.PFS = 12, p.OR = 0.6, n = 50,
-      rho.OS.PFS = 0.5, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
-    ),
-    arm2 = list(
-      # Subgroups
-      sub1 = list(
-        mst.OS = 12, mst.PFS = 8, p.OR = 0.4, n = 30,
-        rho.OS.PFS = 0.5, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
-      ),
-      sub2 = list(
-        mst.OS = 10, mst.PFS = 6, p.OR = 0.3, n = 20,
-        rho.OS.PFS = 0.5, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
-      )
-    )
-  )
-
-  set.seed(101112)
-  result <- rCorrSurvBinaryMultiArmSubgroup(
-    nsim = 2,
-    outcomes = c('OS', 'PFS', 'OR'),
-    arm.params = mixed_params,
-    tau = 24,
-    validate.bounds = FALSE
-  )
-
-  # Check structure
-  arm1_data <- result %>% filter(ARM == "arm1")
-  arm2_data <- result %>% filter(ARM == "arm2")
-
-  expect_true(all(is.na(arm1_data$SUBGROUP)))  # No subgroups for arm1
-  expect_false(all(is.na(arm2_data$SUBGROUP)))  # Has subgroups for arm2
-  expect_equal(sort(unique(arm2_data$SUBGROUP)), c("sub1", "sub2"))
-})all(is.na(result$SUBGROUP)))  # No subgroups in this example
+  expect_true(all(is.na(result$SUBGROUP)))  # No subgroups in this example
 })
 
 test_that("rCorrSurvBinaryMultiArmSubgroup handles subgroups", {
@@ -167,4 +126,45 @@ test_that("rCorrSurvBinaryMultiArmSubgroup generates unique patient IDs", {
       .groups = 'drop'
     )
 
-  expect_true(
+  expect_true(all(id_check$n_unique == id_check$n_total))
+  expect_true(all(id_check$max_id == 25))  # Should be 1 to n for each arm
+})
+
+test_that("rCorrSurvBinaryMultiArmSubgroup handles mixed arm structures", {
+  # Mix of single population and subgroups
+  mixed_params <- list(
+    arm1 = list(
+      # Single population
+      mst.OS = 18, mst.PFS = 12, p.OR = 0.6, n = 50,
+      rho.OS.PFS = 0.5, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
+    ),
+    arm2 = list(
+      # Subgroups
+      sub1 = list(
+        mst.OS = 12, mst.PFS = 8, p.OR = 0.4, n = 30,
+        rho.OS.PFS = 0.5, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
+      ),
+      sub2 = list(
+        mst.OS = 10, mst.PFS = 6, p.OR = 0.3, n = 20,
+        rho.OS.PFS = 0.5, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
+      )
+    )
+  )
+
+  set.seed(101112)
+  result <- rCorrSurvBinaryMultiArmSubgroup(
+    nsim = 2,
+    outcomes = c('OS', 'PFS', 'OR'),
+    arm.params = mixed_params,
+    tau = 24,
+    validate.bounds = FALSE
+  )
+
+  # Check structure
+  arm1_data <- result %>% filter(ARM == "arm1")
+  arm2_data <- result %>% filter(ARM == "arm2")
+
+  expect_true(all(is.na(arm1_data$SUBGROUP)))  # No subgroups for arm1
+  expect_false(all(is.na(arm2_data$SUBGROUP)))  # Has subgroups for arm2
+  expect_equal(sort(unique(arm2_data$SUBGROUP)), c("sub1", "sub2"))
+})
