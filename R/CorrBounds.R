@@ -41,7 +41,6 @@
 #' analytical integration. No grid approximation is used.
 #'
 #' @examples
-#' \dontrun{
 #' # Calculate true bounds for OS, PFS, and OR
 #' validation <- CorrBounds(
 #'   outcomes = c('OS', 'PFS', 'OR'),
@@ -63,7 +62,6 @@
 #'     bound <- validation$bounds[[bound.name]]
 #'     cat(sprintf("%s: [%.6f, %.6f]\n", bound.name, bound$lower, bound$upper))
 #'   }
-#' }
 #' }
 #'
 #' @importFrom stats integrate qexp

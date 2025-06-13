@@ -43,21 +43,20 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
 #' # Example 1: Two arms without subgroups
 #' arm.params.simple <- list(
 #'   arm1 = list(
-#'     mst.OS = 18, mst.PFS = 12, p.OR = 0.6, n = 100,
+#'     mst.OS = 18, mst.PFS = 12, p.OR = 0.6, n = 200,
 #'     rho.OS.PFS = 0.5, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
 #'   ),
 #'   arm2 = list(
-#'     mst.OS = 12, mst.PFS = 8, p.OR = 0.4, n = 100,
+#'     mst.OS = 12, mst.PFS = 8, p.OR = 0.4, n = 200,
 #'     rho.OS.PFS = 0.5, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
 #'   )
 #' )
 #'
 #' result1 <- rCorrSurvBinaryMultiArmSubgroup(
-#'   nsim = 1000,
+#'   nsim = 100,
 #'   outcomes = c('OS', 'PFS', 'OR'),
 #'   arm.params = arm.params.simple,
 #'   tau = 24,
@@ -89,13 +88,12 @@
 #' )
 #'
 #' result2 <- rCorrSurvBinaryMultiArmSubgroup(
-#'   nsim = 500,
+#'   nsim = 100,
 #'   outcomes = c('OS', 'PFS', 'OR'),
 #'   arm.params = arm.params.subgroups,
 #'   tau = 18,
 #'   seed = 456
 #' )
-#' }
 #'
 #' @import copula
 #' @import dplyr

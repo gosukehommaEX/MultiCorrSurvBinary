@@ -1,0 +1,368 @@
+---
+title: "Comprehensive Examples"
+author: "Gosuke Homma"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Comprehensive Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+## Introduction
+
+This vignette provides comprehensive examples of using the `MultiCorrSurvBinary` package for various clinical trial simulation scenarios.
+
+```{r load-packages}
+library(MultiCorrSurvBinary)
+library(dplyr)
+library(ggplot2)
+```
+
+## Example 1: Oncology Phase II Trial
+
+Simulate a single-arm Phase II oncology trial with correlated endpoints.
+
+```{r phase2-trial}
+# Phase II trial parameters
+set.seed(2024)
+
+# Generate single-arm data
+phase2_data <- rCorrSurvBinary(
+  nsim = 100,
+  outcomes = c('OS', 'PFS', 'OR'),
+  n = 80,
+  mst.OS = 15,      # 15-month median OS
+  mst.PFS = 8,      # 8-month median PFS
+  p.OR = 0.35,      # 35% response rate
+  rho.OS.PFS = 0.6, # Strong correlation between survivals
+  rho.OS.OR = 0.4,  # Moderate correlation OS-response
+  rho.PFS.OR = 0.5, # Moderate correlation PFS-response
+  tau = 18,         # 18-month accrual
+  seed = 123
+)
+
+# Summary statistics
+phase2_summary <- phase2_data %>%
+  summarise(
+    n_sims = n_distinct(sim),
+    median_OS = median(OS),
+    median_PFS = median(PFS),
+    response_rate = mean(OR),
+    correlation_OS_PFS = cor(OS, PFS),
+    correlation_OS_OR = cor(OS, OR),
+    correlation_PFS_OR = cor(PFS, OR)
+  )
+
+print(phase2_summary)
+```
+
+## Example 2: Randomized Controlled Trial
+
+Simulate a two-arm randomized controlled trial.
+
+```{r rct-trial}
+# Define RCT parameters
+rct_params <- list(
+  experimental = list(
+    mst.OS = 24, mst.PFS = 12, p.OR = 0.5, n = 200,
+    rho.OS.PFS = 0.7, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
+  ),
+  control = list(
+    mst.OS = 18, mst.PFS = 9, p.OR = 0.3, n = 200,
+    rho.OS.PFS = 0.7, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
+  )
+)
+
+# Generate RCT data
+rct_data <- rCorrSurvBinaryMultiArmSubgroup(
+  nsim = 200,
+  outcomes = c('OS', 'PFS', 'OR'),
+  arm.params = rct_params,
+  tau = 36,
+  seed = 456
+)
+
+# Compare arms
+arm_comparison <- rct_data %>%
+  group_by(ARM) %>%
+  summarise(
+    n_patients = n(),
+    median_OS = median(OS),
+    median_PFS = median(PFS),
+    response_rate = mean(OR),
+    .groups = 'drop'
+  )
+
+print(arm_comparison)
+```
+
+## Example 3: Biomarker-Stratified Trial
+
+Simulate a trial with biomarker-defined subgroups.
+
+```{r biomarker-trial}
+# Biomarker-stratified trial parameters
+biomarker_params <- list(
+  treatment = list(
+    biomarker_positive = list(
+      mst.OS = 30, mst.PFS = 18, p.OR = 0.7, n = 120,
+      rho.OS.PFS = 0.6, rho.OS.OR = 0.4, rho.PFS.OR = 0.5
+    ),
+    biomarker_negative = list(
+      mst.OS = 20, mst.PFS = 10, p.OR = 0.4, n = 80,
+      rho.OS.PFS = 0.6, rho.OS.OR = 0.4, rho.PFS.OR = 0.5
+    )
+  ),
+  control = list(
+    biomarker_positive = list(
+      mst.OS = 22, mst.PFS = 12, p.OR = 0.4, n = 120,
+      rho.OS.PFS = 0.6, rho.OS.OR = 0.4, rho.PFS.OR = 0.5
+    ),
+    biomarker_negative = list(
+      mst.OS = 18, mst.PFS = 8, p.OR = 0.25, n = 80,
+      rho.OS.PFS = 0.6, rho.OS.OR = 0.4, rho.PFS.OR = 0.5
+    )
+  )
+)
+
+# Generate biomarker-stratified data
+biomarker_data <- rCorrSurvBinaryMultiArmSubgroup(
+  nsim = 100,
+  outcomes = c('OS', 'PFS', 'OR'),
+  arm.params = biomarker_params,
+  tau = 24,
+  seed = 789
+)
+
+# Analyze by biomarker status
+biomarker_analysis <- biomarker_data %>%
+  group_by(ARM, SUBGROUP) %>%
+  summarise(
+    n_patients = n(),
+    median_OS = round(median(OS), 1),
+    median_PFS = round(median(PFS), 1),
+    response_rate = round(mean(OR), 3),
+    .groups = 'drop'
+  )
+
+print(biomarker_analysis)
+```
+
+## Example 4: Event-Driven Analysis
+
+Perform interim and final analyses based on event counts.
+
+```{r event-driven-analysis}
+# Use the RCT data for event-driven analysis
+event_analysis <- AnalysisCorrSurvBinary(
+  data = rct_data,
+  E = c(50, 100, 150),  # Interim analyses at 50, 100, final at 150 events
+  prioritize = "OS",
+  subgroup.prioritize = c("entire"),
+  alternative = "greater"
+)
+
+# Summarize results by analysis timepoint
+event_summary <- event_analysis %>%
+  group_by(analysis_event, outcome) %>%
+  summarise(
+    n_comparisons = n(),
+    mean_analysis_time_months = round(mean(analysis_time) * 12, 1),
+    significant_tests = sum(pvalue < 0.05, na.rm = TRUE),
+    power = round(mean(pvalue < 0.05, na.rm = TRUE), 3),
+    .groups = 'drop'
+  )
+
+print(event_summary)
+```
+
+## Example 5: Correlation Bounds Exploration
+
+Explore feasible correlation ranges for different parameter combinations.
+
+```{r correlation-exploration}
+# Function to explore correlation bounds
+explore_bounds <- function(mst_os, mst_pfs, p_or) {
+  bounds <- CorrBounds(
+    outcomes = c('OS', 'PFS', 'OR'),
+    lambda.OS = log(2) / mst_os,
+    lambda.PFS = log(2) / mst_pfs,
+    p.OR = p_or,
+    rho.OS.PFS = 0,
+    rho.OS.OR = 0,
+    rho.PFS.OR = 0
+  )
+  
+  data.frame(
+    mst_OS = mst_os,
+    mst_PFS = mst_pfs,
+    p_OR = p_or,
+    OS_PFS_lower = bounds$bounds$OS.PFS$lower,
+    OS_PFS_upper = bounds$bounds$OS.PFS$upper,
+    OS_OR_lower = bounds$bounds$OS.OR$lower,
+    OS_OR_upper = bounds$bounds$OS.OR$upper,
+    PFS_OR_lower = bounds$bounds$PFS.OR$lower,
+    PFS_OR_upper = bounds$bounds$PFS.OR$upper
+  )
+}
+
+# Explore different parameter combinations
+param_grid <- expand.grid(
+  mst_os = c(12, 18, 24),
+  mst_pfs = c(6, 9, 12),
+  p_or = c(0.3, 0.5, 0.7)
+)
+
+bounds_results <- do.call(rbind, lapply(1:nrow(param_grid), function(i) {
+  explore_bounds(param_grid$mst_os[i], param_grid$mst_pfs[i], param_grid$p_or[i])
+}))
+
+# Display bounds for different scenarios
+print(head(bounds_results, 10))
+```
+
+## Example 6: Sample Size and Power Considerations
+
+Demonstrate how correlation affects power in different scenarios.
+
+```{r power-analysis}
+# Function to simulate power for different correlation scenarios
+simulate_power <- function(rho_os_pfs, n_per_arm = 100, nsim = 500) {
+  # Generate data with specified correlation
+  power_params <- list(
+    treatment = list(
+      mst.OS = 20, mst.PFS = 12, p.OR = 0.5, n = n_per_arm,
+      rho.OS.PFS = rho_os_pfs, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
+    ),
+    control = list(
+      mst.OS = 15, mst.PFS = 8, p.OR = 0.3, n = n_per_arm,
+      rho.OS.PFS = rho_os_pfs, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
+    )
+  )
+  
+  sim_data <- rCorrSurvBinaryMultiArmSubgroup(
+    nsim = nsim,
+    outcomes = c('OS', 'PFS', 'OR'),
+    arm.params = power_params,
+    tau = 24,
+    seed = 123
+  )
+  
+  # Perform analysis
+  analysis <- AnalysisCorrSurvBinary(
+    data = sim_data,
+    E = c(80),  # Single analysis at 80 events
+    prioritize = "OS",
+    subgroup.prioritize = c("entire"),
+    alternative = "greater"
+  )
+  
+  # Calculate power
+  power_results <- analysis %>%
+    group_by(outcome) %>%
+    summarise(
+      power = mean(pvalue < 0.05, na.rm = TRUE),
+      .groups = 'drop'
+    ) %>%
+    mutate(correlation = rho_os_pfs)
+  
+  return(power_results)
+}
+
+# Compare power across different correlation levels
+correlation_levels <- c(0.3, 0.5, 0.7)
+power_comparison <- do.call(rbind, lapply(correlation_levels, simulate_power))
+
+print(power_comparison)
+```
+
+## Example 7: Validation and Diagnostics
+
+Validate simulation results and perform diagnostic checks.
+
+```{r validation}
+# Generate validation data
+validation_data <- rCorrSurvBinary(
+  nsim = 1000,
+  outcomes = c('OS', 'PFS', 'OR'),
+  n = 200,
+  mst.OS = 18,
+  mst.PFS = 10,
+  p.OR = 0.4,
+  rho.OS.PFS = 0.6,
+  rho.OS.OR = 0.3,
+  rho.PFS.OR = 0.4,
+  tau = 24,
+  seed = 2024
+)
+
+# Check marginal distributions
+marginal_check <- validation_data %>%
+  summarise(
+    # OS exponential check
+    theoretical_median_OS = 18,
+    empirical_median_OS = median(OS),
+    # PFS exponential check  
+    theoretical_median_PFS = 10,
+    empirical_median_PFS = median(PFS),
+    # OR Bernoulli check
+    theoretical_response_rate = 0.4,
+    empirical_response_rate = mean(OR),
+    # Correlation checks
+    theoretical_cor_OS_PFS = 0.6,
+    empirical_cor_OS_PFS = cor(OS, PFS),
+    theoretical_cor_OS_OR = 0.3,
+    empirical_cor_OS_OR = cor(OS, OR),
+    theoretical_cor_PFS_OR = 0.4,
+    empirical_cor_PFS_OR = cor(PFS, OR)
+  )
+
+print(marginal_check)
+
+# Check OS >= PFS constraint
+constraint_check <- validation_data %>%
+  summarise(
+    violations = sum(OS < PFS),
+    total_observations = n(),
+    violation_rate = mean(OS < PFS)
+  )
+
+print(constraint_check)
+```
+
+## Best Practices and Tips
+
+### 1. Parameter Selection
+- Always validate correlation bounds before simulation
+- Consider biological plausibility of correlation values
+- Use realistic survival medians based on disease context
+
+### 2. Sample Size Planning
+- Account for correlation when calculating power
+- Consider event-driven analyses for survival endpoints
+- Plan interim analyses carefully to control Type I error
+
+### 3. Simulation Efficiency
+- Start with small `nsim` for testing
+- Use seeds for reproducibility
+- Consider parallel processing for large simulations
+
+### 4. Validation
+- Check marginal distributions match specifications
+- Verify correlation structures are preserved
+- Ensure biological constraints (OS ≥ PFS) are maintained
+
+This comprehensive set of examples demonstrates the flexibility and power of the `MultiCorrSurvBinary` package for clinical trial simulations.

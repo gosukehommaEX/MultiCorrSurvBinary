@@ -1,0 +1,253 @@
+---
+  title: "Introduction to MultiCorrSurvBinary"
+author: "Gosuke Homma"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+  toc: true
+toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Introduction to MultiCorrSurvBinary}
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteEncoding{UTF-8}
+---
+  
+  ```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+## Overview
+
+The `MultiCorrSurvBinary` package provides comprehensive tools for generating correlated time-to-event and binary outcomes in clinical trial simulations. This package is particularly useful for:
+  
+  - Simulating correlated clinical trial endpoints
+- Validating correlation structures using Fréchet-Hoeffding bounds
+- Performing event-driven analyses with proper statistical testing
+- Handling multiple treatment arms and subgroups
+
+## Key Concepts
+
+### Outcomes Supported
+
+The package supports three types of clinical trial outcomes:
+  
+  1. **OS (Overall Survival)**: Time-to-event outcome following exponential distribution
+2. **PFS (Progression-Free Survival)**: Time-to-event outcome following exponential distribution  
+3. **OR (Objective Response)**: Binary outcome following Bernoulli distribution
+
+### Correlation Structure
+
+Correlations between outcomes are modeled using:
+  
+  - **Normal copula** for generating correlated random variables
+- **Fréchet-Hoeffding bounds** for validating feasible correlation ranges
+- **Analytical integration** for precise bound calculations
+
+### OS ≥ PFS Constraint
+
+When both OS and PFS are included, the biological constraint OS ≥ PFS is enforced with options to prioritize preserving either the OS or PFS marginal distribution.
+
+## Basic Usage
+
+### Load the Package
+
+```{r load}
+library(MultiCorrSurvBinary)
+library(dplyr)
+```
+
+### Single Population Simulation
+
+Generate correlated outcomes for a single population:
+  
+  ```{r single-pop}
+# Generate correlated OS, PFS, and OR for single population
+result_single <- rCorrSurvBinary(
+  nsim = 10,
+  outcomes = c('OS', 'PFS', 'OR'),
+  n = 100,
+  mst.OS = 12,      # 12-year median OS
+  mst.PFS = 6,      # 6-year median PFS  
+  p.OR = 0.4,       # 40% response rate
+  rho.OS.PFS = 0.5, # Correlation between OS and PFS
+  rho.OS.OR = 0.3,  # Correlation between OS and OR
+  rho.PFS.OR = 0.4, # Correlation between PFS and OR
+  tau = 24,         # 24-year accrual period
+  seed = 123
+)
+
+# View first few rows
+head(result_single)
+```
+
+### Correlation Bounds Validation
+
+Validate that correlation parameters are within feasible bounds:
+  
+  ```{r bounds}
+# Check correlation bounds
+bounds_check <- CorrBounds(
+  outcomes = c('OS', 'PFS', 'OR'),
+  lambda.OS = log(2)/12,  # Rate parameter for OS
+  lambda.PFS = log(2)/6,  # Rate parameter for PFS
+  p.OR = 0.4,
+  rho.OS.PFS = 0.5,
+  rho.OS.OR = 0.3,
+  rho.PFS.OR = 0.4
+)
+
+# Print validation results
+if (bounds_check$valid) {
+  cat("Correlation parameters are valid!\n")
+} else {
+  cat("Invalid correlations:\n")
+  for (error in bounds_check$errors) {
+    cat("-", error, "\n")
+  }
+}
+
+# Show calculated bounds
+for (bound_name in names(bounds_check$bounds)) {
+  bound <- bounds_check$bounds[[bound_name]]
+  cat(sprintf("%s bounds: [%.4f, %.4f]\n", 
+              bound_name, bound$lower, bound$upper))
+}
+```
+
+### Multiple Arms Simulation
+
+Generate data for multiple treatment arms:
+  
+  ```{r multi-arm}
+# Define parameters for two treatment arms
+arm_params <- list(
+  arm1 = list(
+    mst.OS = 18, mst.PFS = 12, p.OR = 0.6, n = 150,
+    rho.OS.PFS = 0.5, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
+  ),
+  arm2 = list(
+    mst.OS = 12, mst.PFS = 8, p.OR = 0.4, n = 150,
+    rho.OS.PFS = 0.5, rho.OS.OR = 0.3, rho.PFS.OR = 0.4
+  )
+)
+
+# Generate multi-arm data
+result_multi <- rCorrSurvBinaryMultiArmSubgroup(
+  nsim = 10,
+  outcomes = c('OS', 'PFS', 'OR'),
+  arm.params = arm_params,
+  tau = 24,
+  seed = 456
+)
+
+# Summary by arm
+result_multi %>%
+  group_by(ARM) %>%
+  summarise(
+    n_patients = n(),
+    mean_OS = mean(OS, na.rm = TRUE),
+    mean_PFS = mean(PFS, na.rm = TRUE),
+    response_rate = mean(OR, na.rm = TRUE),
+    .groups = 'drop'
+  )
+```
+
+## Advanced Features
+
+### Subgroup Analysis
+
+The package supports complex subgroup structures:
+  
+  ```{r subgroups}
+# Define parameters with subgroups
+arm_params_subgroups <- list(
+  arm1 = list(
+    sub1 = list(
+      mst.OS = 20, mst.PFS = 12, p.OR = 0.7, n = 100,
+      rho.OS.PFS = 0.4, rho.OS.OR = 0.2, rho.PFS.OR = 0.3
+    ),
+    sub2 = list(
+      mst.OS = 15, mst.PFS = 8, p.OR = 0.5, n = 50,
+      rho.OS.PFS = 0.4, rho.OS.OR = 0.2, rho.PFS.OR = 0.3
+    )
+  ),
+  arm2 = list(
+    sub1 = list(
+      mst.OS = 12, mst.PFS = 6, p.OR = 0.4, n = 100,
+      rho.OS.PFS = 0.4, rho.OS.OR = 0.2, rho.PFS.OR = 0.3
+    ),
+    sub2 = list(
+      mst.OS = 10, mst.PFS = 5, p.OR = 0.3, n = 50,
+      rho.OS.PFS = 0.4, rho.OS.OR = 0.2, rho.PFS.OR = 0.3
+    )
+  )
+)
+
+# Generate subgroup data
+result_subgroups <- rCorrSurvBinaryMultiArmSubgroup(
+  nsim = 5,
+  outcomes = c('OS', 'PFS', 'OR'),
+  arm.params = arm_params_subgroups,
+  tau = 18,
+  seed = 789
+)
+
+# Summary by arm and subgroup
+result_subgroups %>%
+  group_by(ARM, SUBGROUP) %>%
+  summarise(
+    n_patients = n(),
+    mean_OS = round(mean(OS, na.rm = TRUE), 2),
+    mean_PFS = round(mean(PFS, na.rm = TRUE), 2),
+    response_rate = round(mean(OR, na.rm = TRUE), 2),
+    .groups = 'drop'
+  )
+```
+
+### Event-Driven Analysis
+
+Perform sequential analyses at predefined event numbers:
+  
+  ```{r event-driven}
+# Perform event-driven analysis
+analysis_results <- AnalysisCorrSurvBinary(
+  data = result_multi,
+  E = c(25, 50, 75),  # Event numbers for analysis
+  prioritize = "OS",
+  subgroup.prioritize = c("entire"),
+  alternative = "greater"
+)
+
+# Summary of analysis results
+analysis_results %>%
+  group_by(analysis_event, outcome) %>%
+  summarise(
+    n_tests = n(),
+    significant_tests = sum(pvalue < 0.05, na.rm = TRUE),
+    mean_analysis_time = round(mean(analysis_time, na.rm = TRUE), 2),
+    .groups = 'drop'
+  )
+```
+
+## Key Functions Summary
+
+- `rCorrSurvBinary()`: Generate correlated outcomes for single population
+- `rCorrSurvBinaryMultiArmSubgroup()`: Generate correlated outcomes for multiple arms/subgroups  
+- `CorrBounds()`: Validate correlation bounds
+- `TestsSurvBinary()`: Perform statistical tests
+- `AnalysisCorrSurvBinary()`: Event-driven analysis framework
+
+## Best Practices
+
+1. **Always validate correlation bounds** before running large simulations
+2. **Use appropriate event numbers** relative to sample sizes in event-driven analyses
+3. **Set seeds** for reproducible results
+4. **Consider biological constraints** when specifying correlation parameters
+5. **Test with small nsim** first before scaling up simulations
+
+For more detailed examples and advanced usage, see the `examples` vignette.
