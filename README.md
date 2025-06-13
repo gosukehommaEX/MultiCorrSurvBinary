@@ -112,4 +112,4 @@ This package is licensed under the MIT License.
 
 ## Author
 
-Gosuke Homma (my.name.is.gosuke@gmail.com)
+Gosuke Homma
