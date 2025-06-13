@@ -1,18 +1,34 @@
 Package: MultiCorrSurvBinary
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Authors@R: c(
-    person(
-      "Gosuke", "Homma",
-      email = "my.name.is.gosuke@gmail.com",
-      role = c("aut", "cre")
-    )
-  )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
+Title: Generate Correlated Time-to-Event and Binary Outcomes for Clinical Trials
+Version: 1.0.0
+Date: 2025-06-13
+Authors@R: person("Gosuke", "Homma", 
+                  email = "my.name.is.gosuke@gmail.com", 
+                  role = c("aut", "cre"))
+Description: Provides functions for generating correlated time-to-event and binary 
+    outcomes in clinical trial simulations. Supports multiple treatment arms, 
+    subgroups, and event-driven analyses with proper correlation structure modeling 
+    using copulas. Includes validation of Fréchet-Hoeffding bounds and comprehensive 
+    statistical testing capabilities.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.1
+Depends: 
+    R (>= 3.5.0)
+Imports:
+    copula (>= 1.0.0),
+    dplyr (>= 1.0.0),
+    survival (>= 3.0.0),
+    stats,
+    tibble (>= 3.0.0)
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    ggplot2,
+    devtools
+VignetteBuilder: knitr
+URL: https://github.com/gosukehommaEX/MultiCorrSurvBinary
+BugReports: https://github.com/gosukehommaEX/MultiCorrSurvBinary/issues
