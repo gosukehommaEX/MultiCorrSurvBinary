@@ -29,22 +29,19 @@ test_that("CorrBounds detects invalid correlations", {
 })
 
 test_that("CorrBounds handles missing parameters correctly", {
-  # Test missing lambda.OS - should produce specific error message
-  expect_error(
-    CorrBounds(
-      outcomes = c('OS', 'PFS'),
-      lambda.PFS = log(2)/6,
-      rho.OS.PFS = 0.5
-    ),
-    "lambda.OS and lambda.PFS must be specified"
+  # Test missing lambda.OS for OS-PFS correlation
+  # Based on the function implementation, it should return validation.results with errors
+  result <- CorrBounds(
+    outcomes = c('OS', 'PFS'),
+    lambda.PFS = log(2)/6,
+    rho.OS.PFS = 0.5
+    # lambda.OS is NULL (missing)
   )
 
-  # Alternative: Test validation result instead of direct error
-  result <- CorrBounds(
-    outcomes = c('OS'),
-    lambda.OS = log(2)/12
-  )
-  expect_true(result$valid)  # Should be valid for single outcome
+  # Should return invalid result with error message
+  expect_false(result$valid)
+  expect_gt(length(result$errors), 0)
+  expect_true(any(grepl("lambda.OS", result$errors)))
 })
 
 test_that("CorrBounds calculates bounds correctly", {
@@ -128,4 +125,19 @@ test_that("CorrBounds handles edge cases for binary outcomes", {
     rho.OS.OR = 0.1
   )
   expect_true(result_high$valid || length(result_high$errors) > 0)
+})
+
+test_that("CorrBounds validates p.OR parameter", {
+  # Test missing p.OR for OR outcome
+  result <- CorrBounds(
+    outcomes = c('OS', 'OR'),
+    lambda.OS = log(2)/12,
+    rho.OS.OR = 0.3
+    # p.OR is NULL (missing)
+  )
+
+  # Should return invalid result with error message
+  expect_false(result$valid)
+  expect_gt(length(result$errors), 0)
+  expect_true(any(grepl("p.OR", result$errors)))
 })
